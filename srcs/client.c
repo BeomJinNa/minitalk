@@ -6,7 +6,7 @@
 /*   By: bena <bena@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 21:04:20 by bena              #+#    #+#             */
-/*   Updated: 2023/04/26 02:36:09 by bena             ###   ########.fr       */
+/*   Updated: 2023/04/26 04:22:44 by bena             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	main(int ac, char **av)
 		ptr++;
 	}
 	send_one_byte(pid, '\0');
-	usleep(100000);
+	usleep(1000);
 	return (0);
 }
 
@@ -51,7 +51,7 @@ static void	send_one_byte(pid_t pid, int byte)
 		else
 			kill(pid, SIGUSR2);
 		digit <<= 1;
-		usleep(100);
+		usleep(40);
 	}
 }
 
@@ -60,11 +60,12 @@ static void	send_my_pid(pid_t target_pid)
 	const pid_t	my_pid = getpid();
 
 	send_one_byte(target_pid, my_pid % 256);
-	send_one_byte(target_pid, my_pid / 256);
+	send_one_byte(target_pid, (my_pid % 65536) / 256);
+	send_one_byte(target_pid, my_pid / 65536);
 }
 
 static void	print_signal(int sig)
 {
 	if (sig == SIGUSR1)
-		write(1, "sending successful\n", 19);
+		ft_printf("server feedback : sending successful\n");
 }

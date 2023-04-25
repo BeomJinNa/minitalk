@@ -6,7 +6,7 @@
 /*   By: bena <bena@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 21:04:20 by bena              #+#    #+#             */
-/*   Updated: 2023/04/26 02:31:27 by bena             ###   ########.fr       */
+/*   Updated: 2023/04/26 04:40:04 by bena             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,11 @@
 
 static void	get_signal(int sig);
 static void	end_to_receive_the_message(pid_t client_pid);
+static void	print_bytes(char c);
 
 int	main(void)
 {
-	const pid_t		my_pid = getpid();
+	const pid_t	my_pid = getpid();
 
 	ft_printf("pid : %d\n", my_pid);
 	signal(SIGUSR1, get_signal);
@@ -38,7 +39,7 @@ static void	get_signal(int sig)
 	if (sig == SIGUSR1)
 		byte |= digit;
 	digit <<= 1;
-	if (client_pid == -1 && digit == 65536)
+	if (client_pid == -1 && digit == 16777216)
 	{
 		digit = 1;
 		client_pid = byte;
@@ -48,7 +49,7 @@ static void	get_signal(int sig)
 	{
 		digit = 1;
 		if (byte != 0)
-			ft_putchar_fd((char)byte, 1);
+			print_bytes((char)byte);
 		else
 		{
 			end_to_receive_the_message(client_pid);
@@ -60,6 +61,26 @@ static void	get_signal(int sig)
 
 static void	end_to_receive_the_message(pid_t client_pid)
 {
+	print_bytes('\0');
 	write(1, "\n", 1);
 	kill(client_pid, SIGUSR1);
+}
+
+static void	print_bytes(char c)
+{
+	static char	buffer[32];
+	static char	*ptr = buffer;
+
+	if (c != '\0' && ptr - buffer < 30)
+		*ptr++ = c;
+	else
+	{
+		if (buffer == ptr)
+			return ;
+		*ptr++ = c;
+		*ptr = '\0';
+		ft_printf("%s", buffer);
+		ptr = buffer;
+		ft_memset(buffer, 0, 32);
+	}
 }

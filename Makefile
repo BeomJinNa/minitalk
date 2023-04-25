@@ -30,8 +30,6 @@ S_SRCS	= srcs/server.c
 
 C_SRCS	= srcs/client.c
 
-B_SRCS	=
-
 S_OBJS	= $(S_SRCS:.c=.o)
 C_OBJS	= $(C_SRCS:.c=.o)
 B_OBJS	= $(B_SRCS:.c=.o)
@@ -54,20 +52,6 @@ $(CLIENT) : $(LIBFT) $(C_OBJS)
 
 $(LIBFT) :
 	make -C libft
-
-
-
-.PHONY: bonus
-bonus :
-	make $(B_NAME)
-
-$(B_NAME) : $(LIBFT_B) $(B_OBJS)
-	$(CC) -o $(B_NAME) $(B_OBJS) $(foreach lib, $(B_LIBS), -L$(lib)) $(foreach arch, $(B_ARCH), -l$(arch))
-
-$(LIBFT_B) :
-	make -C libft_bonus
-
-
 
 
 
