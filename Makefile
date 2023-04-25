@@ -5,7 +5,8 @@ AR		= ar
 ARFLAGS	= crs
 CFLAGS	= -Wall -Wextra -Werror
 
-NAME	= test
+SERVER	= server
+CLIENT	= client
 B_NAME	= test_bonus
 INCLUDE	= includes/
 
@@ -25,11 +26,14 @@ LIBFT_B	= libft_bonus/libft_bonus.a
 
 #sources=======================================================================
 
-SRCS	= main.c
+S_SRCS	= srcs/server.c
+
+C_SRCS	= srcs/client.c
 
 B_SRCS	=
 
-OBJS	= $(SRCS:.c=.o)
+S_OBJS	= $(S_SRCS:.c=.o)
+C_OBJS	= $(C_SRCS:.c=.o)
 B_OBJS	= $(B_SRCS:.c=.o)
 
 
@@ -39,10 +43,14 @@ B_OBJS	= $(B_SRCS:.c=.o)
 
 .PHONY: all
 all :
-	make $(NAME)
+	make $(SERVER)
+	make $(CLIENT)
 
-$(NAME) : $(LIBFT) $(OBJS)
-	$(CC) -o $(NAME) $(OBJS) $(foreach lib, $(LIBS), -L$(lib)) $(foreach arch, $(ARCH), -l$(arch))
+$(SERVER) : $(LIBFT) $(S_OBJS)
+	$(CC) -o $@ $(S_OBJS) $(foreach lib, $(LIBS), -L$(lib)) $(foreach arch, $(ARCH), -l$(arch))
+
+$(CLIENT) : $(LIBFT) $(C_OBJS)
+	$(CC) -o $@ $(C_OBJS) $(foreach lib, $(LIBS), -L$(lib)) $(foreach arch, $(ARCH), -l$(arch))
 
 $(LIBFT) :
 	make -C libft
@@ -72,13 +80,13 @@ $(LIBFT_B) :
 clean :
 	$(foreach lib, $(LIBS), make fclean -C $(lib);)
 	$(foreach lib, $(B_LIBS), make fclean -C $(lib);)
-	rm -f $(OBJS) $(B_OBJS)
+	rm -f $(S_OBJS) $(C_OBJS)
 
 .PHONY: fclean
 fclean :
 	make clean
-	rm -f $(NAME)
-	rm -f $(B_NAME)
+	rm -f $(SERVER)
+	rm -f $(CLIENT)
 
 .PHONY: re
 re :
